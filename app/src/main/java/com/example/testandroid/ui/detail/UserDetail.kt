@@ -60,7 +60,7 @@ fun UserDetailScreen(loginId: String,userDetailViewModel: UserDetailViewModel = 
                         .wrapContentSize(align = Alignment.BottomCenter)
                         .padding(50.dp)
                 )
-                Text(text = "Loading", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black )
+                Text(text = "Waiting for loading", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black )
             }
         }
         else{

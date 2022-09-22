@@ -1,10 +1,13 @@
 package com.example.testandroid.ui.detail
 
-import android.util.Log
-import android.widget.ImageView
-import androidx.compose.foundation.*
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -13,35 +16,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ScaleFactor
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
+import com.example.testandroid.R
 import com.example.testandroid.model.User
-import com.example.testandroid.ui.theme.Shapes
-import com.example.testandroid.utils.Routes
 
 @Composable
-fun UserDetailScreen(navController: NavController,loginId: String,painter: Painter,userDetailViewModel: UserDetailViewModel = hiltViewModel()){
+fun UserDetailScreen(loginId: String,userDetailViewModel: UserDetailViewModel = hiltViewModel()){
     fun getUser(){
         userDetailViewModel.getUser(loginId)
     }
@@ -61,11 +60,11 @@ fun UserDetailScreen(navController: NavController,loginId: String,painter: Paint
                         .wrapContentSize(align = Alignment.BottomCenter)
                         .padding(50.dp)
                 )
-                Text(text = "Loading", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.Black )
+                Text(text = "Loading", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black )
             }
         }
         else{
-            AvatarBox(user = state[0], painter = painter, navController = navController)
+            AvatarBox(user = state[0])
             Box(modifier = Modifier
                 .height(1.dp)
                 .fillMaxWidth()
@@ -79,7 +78,8 @@ fun UserDetailScreen(navController: NavController,loginId: String,painter: Paint
 }
 
 @Composable
-fun AvatarBox(user: User,painter: Painter,navController: NavController){
+fun AvatarBox(user: User){
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     Column(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.6f)
@@ -88,13 +88,9 @@ fun AvatarBox(user: User,painter: Painter,navController: NavController){
             .fillMaxWidth(0.1f)
             .fillMaxHeight(0.1f)
             .clickable {
-                navController.navigate(Routes.Home.route) {
-                    popUpTo(Routes.Home.route) {
-                        inclusive = true
-                    }
-                }
+                onBackPressedDispatcher?.onBackPressed()
             }){
-            Image(painter = painter, contentDescription = "CloseButton", contentScale = ContentScale.Crop)
+            Image(painter = painterResource(id = R.drawable.close), contentDescription = "CloseButton", contentScale = ContentScale.Crop)
         }
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painter = rememberImagePainter(
@@ -130,7 +126,9 @@ fun DetailBox(user: User){
             .fillMaxWidth()
             .fillMaxHeight(0.4f),
         horizontalArrangement = Arrangement.Center){
-            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.1f), contentAlignment = Alignment.Center){
+            Box(modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.1f), contentAlignment = Alignment.Center){
                 Icon(Icons.Filled.Person, contentDescription = "Avatar",Modifier.size(40.dp))
             }
             Column(modifier = Modifier
@@ -154,7 +152,9 @@ fun DetailBox(user: User){
             .fillMaxWidth()
             .fillMaxHeight(0.5f),
             horizontalArrangement = Arrangement.Center) {
-            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.1f), contentAlignment = Alignment.Center){
+            Box(modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.1f), contentAlignment = Alignment.Center){
                 Icon(Icons.Filled.LocationOn, contentDescription = "Avatar",Modifier.size(40.dp))
             }
             Box(modifier = Modifier
@@ -174,7 +174,9 @@ fun DetailBox(user: User){
             .fillMaxWidth()
             .fillMaxHeight(),
             horizontalArrangement = Arrangement.Center) {
-            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.1f), contentAlignment = Alignment.Center){
+            Box(modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.1f), contentAlignment = Alignment.Center){
                 Icon(Icons.Filled.Link, contentDescription = "Avatar",Modifier.size(40.dp))
             }
             Box(modifier = Modifier
@@ -183,7 +185,8 @@ fun DetailBox(user: User){
                 contentAlignment = Alignment.CenterStart
             ){
                 if (user.blog !=null){
-                    Text(text = user.blog, fontSize = 20.sp, modifier = Modifier.align(Alignment.CenterStart))
+                    OpenBlogLink(text = user.blog, modifier = Modifier.align(Alignment.CenterStart))
+//                    Text(text = user.blog, fontSize = 20.sp, modifier = Modifier.align(Alignment.CenterStart), color = Color.Cyan)
                 }
                 else {
                     Text(text = "None",fontSize = 20.sp, modifier = Modifier.align(Alignment.CenterStart))
@@ -191,4 +194,33 @@ fun DetailBox(user: User){
             }
         }
     }
+}
+
+@Composable
+fun OpenBlogLink(text:String,modifier: Modifier){
+    val annotatedString = buildAnnotatedString {
+        append(text)
+        addStringAnnotation(
+            tag="URL",
+            annotation = text,
+            start = 0,
+            end = text.length
+        )
+        addStyle(
+            style = SpanStyle(
+                fontSize = 20.sp,
+                color = Color.Cyan,
+            ),
+            start = 0,
+            end = text.length
+        )
+    }
+    val urlHandler = LocalUriHandler.current
+    ClickableText(modifier = modifier, text = annotatedString, onClick = {
+        annotatedString
+            .getStringAnnotations("URL",it,it)
+            .firstOrNull()?.let { stringAnnotation ->
+                urlHandler.openUri(stringAnnotation.item)
+            }
+    })
 }

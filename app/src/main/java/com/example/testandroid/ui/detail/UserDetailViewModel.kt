@@ -1,6 +1,5 @@
 package com.example.testandroid.ui.detail
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testandroid.model.User

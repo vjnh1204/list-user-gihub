@@ -43,12 +43,17 @@ fun HomeScreen(homeViewModel: HomeViewModel= hiltViewModel(), clickUserCard:(Str
     LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)){
         if (state.isEmpty()){
             item {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(align = Alignment.Center)
-                        .padding(50.dp)
-                        )
+                Column(modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.5f)
+                            .wrapContentSize(align = Alignment.BottomCenter)
+                            .padding(50.dp)
+                    )
+                    Text(text = "Waiting for loading", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black )
+                }
             }
         }
         itemsIndexed(state){ index, item ->  

@@ -1,6 +1,5 @@
 package com.example.testandroid.utils
 
-import com.example.testandroid.utils.Constants.DETAIL_AGR_USER_LOGIN
 import com.example.testandroid.utils.Constants.DETAIL_SCREEN
 import com.example.testandroid.utils.Constants.HOME_SCREEN
 
